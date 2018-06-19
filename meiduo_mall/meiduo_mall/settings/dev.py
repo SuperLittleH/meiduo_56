@@ -11,18 +11,19 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
-import sys
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+import sys
 sys.path.insert(0,os.path.join(BASE_DIR,'apps'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'ap_oj_txosnd*vwq**)*-)q%xyfj6a1i=6s@ax-c160ou3^f*('
+SECRET_KEY = 'cq&ssmypqr61jzyeij=015odg)r3zcx7=nd-sek)(xt+w!het!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -40,8 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'users.apps.UsersConing'
-
+    'users.apps.UsersConfig'
 ]
 
 MIDDLEWARE = [
@@ -83,9 +83,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'HOST': '127.0.0.1',  # 数据库主机
         'PORT': 3306,  # 数据库端口
-        'USER': 'meiduo',  # 数据库用户名
-        'PASSWORD': 'meiduo',  # 数据库用户密码
-        'NAME': 'meiduo_mall'  # 数据库名字
+        'USER': 'root',  # 数据库用户名
+        'PASSWORD': 'mysql',  # 数据库用户密码
+        'NAME': 'meiduo_mall2'  # 数据库名字
     }
 }
 
@@ -146,6 +146,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
 
 LOGGING = {
     'version': 1,
