@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'users.apps.UsersConfig'
+    # 注册应用
+    'users.apps.UsersConfig',
+    'virifications.apps.VirificationsConfig'
 ]
 
 MIDDLEWARE = [
