@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     # 注册应用
     'users.apps.UsersConfig',
-    'virifications.apps.VirificationsConfig'
+    'verifications.apps.VerificationsConfig'
 ]
 
 MIDDLEWARE = [
