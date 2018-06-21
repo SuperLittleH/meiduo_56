@@ -28,7 +28,8 @@ SECRET_KEY = 'cq&ssmypqr61jzyeij=015odg)r3zcx7=nd-sek)(xt+w!het!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'api.meiduo.site',  'localhost', 'www.meiduo.site']
+
 
 
 # Application definition
