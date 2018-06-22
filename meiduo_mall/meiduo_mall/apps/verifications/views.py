@@ -62,7 +62,7 @@ class SMSCodeView(GenericAPIView):
         redis_conn = get_redis_connection('verify_codes')
         pl = redis_conn.pipeline()
         pl.setex("sms_%s" % mobile, constants.SMS_CODE_REDIS_EXPIRES,sms_code)
-        pl.setex("send_flag_%d" % mobile,constants.SEND_SMS_CODE_INTERVAL,1)
+        pl.setex("send_flag_%s" % mobile,constants.SEND_SMS_CODE_INTERVAL,1)
         pl.execute()
 
         # 发送短信验证码
@@ -80,3 +80,5 @@ class SMSCodeView(GenericAPIView):
             else:
                 logger.warning("发送验证码短信[失败][ mobile: %s ]" % mobile)
                 return Response({'message': 'failed'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
