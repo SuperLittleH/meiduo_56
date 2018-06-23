@@ -202,8 +202,13 @@ LOGGING = {
         },
     }
 }
-
+# 指明自定义的模型类
 AUTH_USER_MODEL = 'users.User'
+
+# 认证方法
+AUTHENTICATION_BACKENDS = [
+    'users.utils.UsernameMobileAuthBackend'
+]
 
 
 REST_FRAMEWORK = {
