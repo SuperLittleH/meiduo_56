@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # 注册应用
     'users.apps.UsersConfig',
     'verifications.apps.VerificationsConfig',
+    'oauth.apps.OauthConfig'
 
 ]
 
