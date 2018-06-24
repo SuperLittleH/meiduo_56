@@ -5,16 +5,17 @@ from django.conf import settings
 import json
 import logging
 
+from oauth import constants
 from oauth.exceptions import QQAPIError
 
 logger = logging.getLogger('django')
 
 class OAuthQQ(object):
     """
-    QQ登录辅助工具类
+    QQ认证辅助工具类
     """
     def __init__(self,client_id=None,client_secret=None,redirect_uri=None,state=None):
-        self.client_id= client_id or settings.QQ_CLIENT_ID
+        self.client_id = client_id or settings.QQ_CLIENT_ID
         self.client_secret = client_secret or settings.QQ_CLIENT_SECRET
         self.redirect_uri = redirect_uri or settings.QQ_REDIRECT_URI
         self.state = state or settings.QQ_STATE
@@ -38,8 +39,8 @@ class OAuthQQ(object):
     def get_access_token(self,code):
         """
         获取access_token
-        :param code:
-        :return:
+        :param code: qq提供的code
+        :return: access_token
         """
         params = {
             'grant_type':'authorization_code',
@@ -59,7 +60,6 @@ class OAuthQQ(object):
 
         return access_token[0]
 
-
     def get_openid(self,access_token):
         """
         获取用户的openid
@@ -72,9 +72,9 @@ class OAuthQQ(object):
             data = json.loads(response_data[10:-4])
         except Exception:
             data = parse_qs(response_data)
-            logger.error('code=%s msg=%s' % (data.get('code'),data.get('msg')))
-            raise QQAPIError
-        openid =  data.get('openid',None)
+            logger.error('code=%s msg=%s' % (data.get('code'), data.get('msg')))
+            raise  QQAPIError
+        openid = data.get('openid',None)
         return openid
 
     @staticmethod
@@ -84,3 +84,10 @@ class OAuthQQ(object):
         :param openid: 用户的openid
         :return: token
         """
+        serializer = Serializer(settings.SECRET_KEY,expires_in=constants.SAVE_QQ_USER_TOKEN_EXPIRES)
+
+        data = {'openid':openid}
+
+        token = serializer.dumps(data)
+
+        return token.decode()
