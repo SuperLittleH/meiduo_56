@@ -96,5 +96,5 @@ class UserDetailSerializer(serializers.ModelSerializer):
     用户详情序列化器
     """
     class Meta:
-        models = User
-        fields = ('id','username','mobile','emial','emial_active')
+        model = User
+        fields = ('id','username','mobile','email','email_active')
