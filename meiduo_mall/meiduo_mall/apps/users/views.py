@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from rest_framework.generics import CreateAPIView, RetrieveAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -64,4 +64,17 @@ class UserDetailView(RetrieveAPIView):
     # 重写get_object
     def get_object(self):
         # 返回用户
+        return self.request.user
+
+
+class EmailView(UpdateAPIView):
+    """
+    保存用户邮箱
+    """
+    # 序列化器
+    serializer_class = serializers.EmailSerializer
+    # 权限
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
         return self.request.user
