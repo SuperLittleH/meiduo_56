@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     # 注册应用
     'users.apps.UsersConfig',
     'verifications.apps.VerificationsConfig',
-    'oauth.apps.OauthConfig'
+    'oauth.apps.OauthConfig',
+    'areas.apps.AreasConfig',
 
 ]
 
