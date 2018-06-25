@@ -17,7 +17,7 @@ class User(AbstractUser):
         verbose_name = '用户'
         verbose_name_plural = verbose_name
 
-    def generate_verfy_amail_url(self):
+    def generate_verify_email_url(self):
         """
         生成验证邮箱的url
         :return: 返回链接

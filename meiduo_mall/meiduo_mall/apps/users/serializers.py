@@ -103,7 +103,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
 
 class EmailSerializer(serializers.ModelSerializer):
-    class Mate:
+    class Meta:
         model = User
         fields = ('id','email')
 
