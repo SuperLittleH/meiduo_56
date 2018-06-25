@@ -255,4 +255,4 @@ EMAIL_HOST_USER = 'superhuj@163.com'
 # 在邮箱中设置的授权密码
 EMAIL_HOST_PASSWORD = 'hujun19931210'
 # 收件人看到的发件人
-EMAIL_FROM = 'junge<superhuj@163.com>'
+EMAIL_FROM = '美多商城SuperH<superhuj@163.com>'
