@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^users/$', views.UserView.as_view()),
     url(r'^authorizations/$',obtain_jwt_token),
     url(r'^user/$',views.UserDetailView.as_view()), #用户个人中心详情
+    url(r'^email/$',views.EmailView.as_view()), #设置邮箱
 ]
