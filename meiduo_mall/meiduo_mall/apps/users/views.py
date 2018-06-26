@@ -114,7 +114,7 @@ class AddressViewSet(CreateModelMixin,UpdateModelMixin,GenericViewSet):
     permissions = [IsAuthenticated]
 
     def get_queryset(self):
-        return self.request.user.addresses.filter(is_delete=False)
+        return self.request.user.addresses.filter(is_deleted=False)
 
 
     def list(self,request,*args,**kwargs):
