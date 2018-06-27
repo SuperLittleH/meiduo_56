@@ -286,3 +286,4 @@ CKEDITOR_CONFIGS = {
     },
 }
 CKEDITOR_UPLOAD_PATH = ''  # 上传图片保存路径，使用了FastDFS，所以此处设为''
+
