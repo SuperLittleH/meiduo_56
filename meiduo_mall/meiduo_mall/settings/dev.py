@@ -297,6 +297,7 @@ CRONJOBS = [
     ('*/5 * * * *','contents.crons.generate_static_index_html', '>> '+ os.path.join(os.path.dirname(BASE_DIR),"logs/crontab.log"))
 ]
 
+
 # 解决crontab中文问题
 CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'
 
