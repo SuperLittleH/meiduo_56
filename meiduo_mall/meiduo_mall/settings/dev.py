@@ -9,13 +9,11 @@ https://docs.djangoproject.com/en/1.11/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
-
-import os
 import datetime
+import os
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 import sys
@@ -30,7 +28,7 @@ SECRET_KEY = 'cq&ssmypqr61jzyeij=015odg)r3zcx7=nd-sek)(xt+w!het!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'api.meiduo.site',  'localhost', 'www.meiduo.site']
+ALLOWED_HOSTS = ['127.0.0.1', 'api.meiduo.site', 'localhost', 'www.meiduo.site']
 
 
 
@@ -55,7 +53,6 @@ INSTALLED_APPS = [
     'areas.apps.AreasConfig',
     'goods.apps.GoodsConfig',
     'contents.apps.ContentsConfig',
-
 ]
 
 MIDDLEWARE = [
@@ -98,12 +95,11 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'HOST': '127.0.0.1',  # 数据库主机
         'PORT': 3306,  # 数据库端口
-        'USER': 'root',  # 数据库用户名
-        'PASSWORD': 'mysql',  # 数据库用户密码
-        'NAME': 'meiduo_mall2'  # 数据库名字
+        'USER': 'meiduo',  # 数据库用户名
+        'PASSWORD': 'meiduo',  # 数据库用户密码
+        'NAME': 'meiduo_mall'  # 数据库名字
     }
 }
-
 
 CACHES = {
     "default": {
@@ -210,6 +206,7 @@ LOGGING = {
         },
     }
 }
+
 # 指明自定义的模型类
 AUTH_USER_MODEL = 'users.User'
 
@@ -232,7 +229,7 @@ REST_FRAMEWORK = {
 
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA':datetime.timedelta(days=1),
-    'JWT_RESPONSE_PAYLOAD_HANDLER':'users.utils.jwt_response_payload_handler',
+    'JWT_RESPONSE_PAYLOAD_HANDLER':'users.utils.jwt_response_payload_handler'
 }
 
 # CORS
@@ -250,7 +247,6 @@ QQ_CLIENT_SECRET = 'c6ce949e04e12ecc909ae6a8b09b637c'
 QQ_REDIRECT_URI = 'http://www.meiduo.site:8080/oauth_callback.html'
 QQ_STATE = '/'
 
-
 # 邮箱等信息设置
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.163.com'
@@ -263,12 +259,12 @@ EMAIL_HOST_PASSWORD = 'hujun19931210'
 # 收件人看到的发件人
 EMAIL_FROM = '美多商城SuperH<superhuj@163.com>'
 
-# DRF扩展
+#缓存时间
 REST_FRAMEWORK_EXTENSIONS = {
     #缓存时间
     'DEFAULT_CACHE_RESPONSE_TIMEOUT':60 * 60,
-    # 缓存存储位置
-    'DEFAULT_USE_CACHE':'default'
+    #缓存存储位置
+    'DEFAULT_USE_CACHE' :'default'
 }
 
 # django文件存储
@@ -289,14 +285,13 @@ CKEDITOR_CONFIGS = {
 CKEDITOR_UPLOAD_PATH = ''  # 上传图片保存路径，使用了FastDFS，所以此处设为''
 
 # 生成的静态html文件保存目录
-GENERATED_STATIC_HTML_FILES_DIR = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)),'front_end_pc')
+GENERATED_STATIC_HTML_FILES_DIR = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'front_end_pc')
 
 # 定时任务
 CRONJOBS = [
     #每五分钟执行一次生成主页静态文件
     ('*/5 * * * *','contents.crons.generate_static_index_html', '>> '+ os.path.join(os.path.dirname(BASE_DIR),"logs/crontab.log"))
 ]
-
 
 # 解决crontab中文问题
 CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'
