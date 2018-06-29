@@ -61,17 +61,18 @@ class UserView(CreateAPIView):
     """
     serializer_class = serializers.CreateUserSerializer
 
+
 class UserDetailView(RetrieveAPIView):
     """
-    用户详情视图
+    用户详情
     """
+    # 序列化器
     serializer_class = serializers.UserDetailSerializer
-    # 权限只有登陆用户才能进入
+    # IsAuthenticated 仅通过认证的用户
     permission_classes = [IsAuthenticated]
 
-    # 重写get_object
+
     def get_object(self):
-        # 返回用户
         return self.request.user
 
 
@@ -81,9 +82,10 @@ class EmailView(UpdateAPIView):
     """
     # 序列化器
     serializer_class = serializers.EmailSerializer
-    # 权限
+    # 权限只限登陆用户进入
     permission_classes = [IsAuthenticated]
 
+    # 重写get_object
     def get_object(self):
         return self.request.user
 
@@ -93,12 +95,12 @@ class VerifyEmailView(APIView):
     邮箱验证
     """
     def get(self,request):
-        #获取token
+        # 获取token
         token = request.query_params.get('token')
         if not token:
             return Response({'message':'缺少token'},status=status.HTTP_400_BAD_REQUEST)
 
-        # 验证token
+        # 校验token
         user = User.check_verify_email_token(token)
         if user is None:
             return Response({'message':'链接信息无效'},status=status.HTTP_400_BAD_REQUEST)
@@ -113,11 +115,10 @@ class AddressViewSet(CreateModelMixin,UpdateModelMixin,GenericViewSet):
     用户地址新增与删除
     """
     serializer_class = serializers.UserAddressSerializer
-    permissions = [IsAuthenticated]
+    permission = [IsAuthenticated]
 
     def get_queryset(self):
         return self.request.user.addresses.filter(is_deleted=False)
-
 
     def list(self,request,*args,**kwargs):
         """
@@ -132,9 +133,9 @@ class AddressViewSet(CreateModelMixin,UpdateModelMixin,GenericViewSet):
         user = self.request.user
         return Response({
             'user_id':user.id,
-            'default_address_id':user.default_address_id,
-            'limit':constants.USER_ADDRESS_COUNTS_LIMIT,
-            'addresses':serializer.data
+            'default_address_id': user.default_address_id,
+            'limit': constants.USER_ADDRESS_COUNTS_LIMIT,
+            'addresses': serializer.data
         })
 
     def create(self, request, *args, **kwargs):
@@ -145,7 +146,7 @@ class AddressViewSet(CreateModelMixin,UpdateModelMixin,GenericViewSet):
         :param kwargs:
         :return:
         """
-        # 检查用户地址数据数目不能超过上限
+        #检查用户地址数据数目不能给超过上限
         count = request.user.addresses.count()
         if count >= constants.USER_ADDRESS_COUNTS_LIMIT:
             return Response({'message':'保存地址数据已达到上限'},status=status.HTTP_400_BAD_REQUEST)
@@ -171,7 +172,7 @@ class AddressViewSet(CreateModelMixin,UpdateModelMixin,GenericViewSet):
     @action(methods=['put'],detail=True)
     def status(self,request,pk=None,address_id=None):
         """
-        设置默认地值
+        设置默认地址
         :param request:
         :param pk:
         :param address_id:
@@ -181,6 +182,7 @@ class AddressViewSet(CreateModelMixin,UpdateModelMixin,GenericViewSet):
         request.user.default_address = address
         request.user.save()
         return Response({'message':'OK'},status=status.HTTP_200_OK)
+
 
     @action(methods=['put'],detail=True)
     def title(self,request,pk=None,address_id=None):
@@ -198,20 +200,17 @@ class AddressViewSet(CreateModelMixin,UpdateModelMixin,GenericViewSet):
 
         return Response(serializer.data)
 
-class UserBrowsingHistoryView(CreateModelMixin,GenericAPIView):
+
+class UserBrowsingHistoryView(CreateModelMixin, GenericAPIView):
     """
-    用户浏览记录
+    用户浏览历史记录
     """
-    # 序列化器
     serializer_class = serializers.AddUserBrowsingHistorySerializer
-    # 权限
     permission_classes = [IsAuthenticated]
 
-    def post(self,request):
+    def post(self, request):
         """
         保存
-        :param request:
-        :return:
         """
         return self.create(request)
 
@@ -223,14 +222,14 @@ class UserBrowsingHistoryView(CreateModelMixin,GenericAPIView):
         """
         user_id = request.user.id
 
-        redis_conn = get_redis_connection('history')
+        redis_conn = get_redis_connection("history")
         history = redis_conn.lrange("history_%s" % user_id, 0, constants.USER_BROWSING_HISTORY_COUNTS_LIMIT)
-
+        print(history)
         skus = []
-        # 为了保持查询出的顺序和用户的浏览历史保持顺序一致
+        # 为了保持查询出的顺序与用户的浏览历史保持顺序一致
         for sku_id in history:
             sku = SKU.objects.get(id=sku_id)
             skus.append(sku)
 
-        serializer = serializers.SKUSerializer(skus, many=True)
+        serializer = serializers.SKUSerializer(skus,many=True)
         return Response(serializer.data)
