@@ -224,7 +224,7 @@ class UserBrowsingHistoryView(CreateModelMixin, GenericAPIView):
 
         redis_conn = get_redis_connection("history")
         history = redis_conn.lrange("history_%s" % user_id, 0, constants.USER_BROWSING_HISTORY_COUNTS_LIMIT)
-        print(history)
+        # print(history)
         skus = []
         # 为了保持查询出的顺序与用户的浏览历史保持顺序一致
         for sku_id in history:
