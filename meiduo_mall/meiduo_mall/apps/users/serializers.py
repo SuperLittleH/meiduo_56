@@ -189,6 +189,7 @@ class AddUserBrowsingHistorySerializer(serializers.Serializer):
             raise serializers.ValidationError('该商品不存在')
         return value
 
+
     def create(self, validated_data):
         """
         保存
