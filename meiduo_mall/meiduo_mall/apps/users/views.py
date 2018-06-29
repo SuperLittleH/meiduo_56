@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django_redis import get_redis_connection
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView, GenericAPIView
@@ -9,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
+from goods.models import SKU
 from users import constants
 from users.models import User
 from . import serializers
@@ -212,3 +214,23 @@ class UserBrowsingHistoryView(CreateModelMixin,GenericAPIView):
         :return:
         """
         return self.create(request)
+
+    def get(self,request):
+        """
+        获取
+        :param request:
+        :return:
+        """
+        user_id = request.user.id
+
+        redis_conn = get_redis_connection('history')
+        history = redis_conn.lrange("history_%s" % user_id, 0, constants.USER_BROWSING_HISTORY_COUNTS_LIMIT)
+
+        skus = []
+        # 为了保持查询出的顺序和用户的浏览历史保持顺序一致
+        for sku_id in history:
+            sku = SKU.objects.get(id=sku_id)
+            skus.append(sku)
+
+        serializer = serializers.SKUSerializer(skus, many=True)
+        return Response(serializer.data)
