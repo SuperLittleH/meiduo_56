@@ -4,6 +4,8 @@ from rest_framework_jwt.settings import api_settings
 import re
 
 from celery_tasks.email.tasks import send_verify_email
+from goods.models import SKU
+from users import constants
 from users.models import User,Address
 
 
@@ -169,3 +171,44 @@ class AddressTitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
         fields = ('title',)
+
+
+class AddUserBrowsingHistorySerializer(serializers.Serializer):
+    """
+    用户浏览历史记录序列化器
+    """
+    sku_id = serializers.IntegerField(label='商品SKU编号',min_value=1)
+
+    def validate_sku_id(self,value):
+        """
+        检查sku_id是否存在
+        :param value:
+        :return:
+        """
+        try:
+            SKU.objects.get(id=value)
+        except SKU.DoesNotExist:
+            raise serializers.ValidationError('该商品不存在')
+
+    def create(self, validated_data):
+        """
+        保存
+        """
+        user_id = self.context['request'].user.id
+        sku_id = validated_data['sku_id']
+
+        redis_conn = get_redis_connection('history')
+        pl = redis_conn.pipeline()
+
+        #移除已经存在的商品浏览记录
+        pl.lrem("history_%s" % user_id, 0, sku_id)
+
+        #添加新的浏览记录
+        pl.lpush("history_%s" % user_id, sku_id)
+
+        # 最多保存五条
+        pl.ltrim("history_%s" % user_id, 0, constants.USER_BROWSING_HISTORY_COUNTS_LIMIT-1)
+
+        pl.execute()
+
+        return validated_data

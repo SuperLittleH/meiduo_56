@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView, GenericAPIView
 from rest_framework.mixins import CreateModelMixin, UpdateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -195,3 +195,20 @@ class AddressViewSet(CreateModelMixin,UpdateModelMixin,GenericViewSet):
         serializer.save()
 
         return Response(serializer.data)
+
+class UserBrowsingHistoryView(CreateModelMixin,GenericAPIView):
+    """
+    用户浏览记录
+    """
+    # 序列化器
+    serializer_class = serializers.AddUserBrowsingHistorySerializer
+    # 权限
+    permission_classes = [IsAuthenticated]
+
+    def post(self,request):
+        """
+        保存
+        :param request:
+        :return:
+        """
+        return self.create(request)
