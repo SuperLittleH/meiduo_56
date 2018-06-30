@@ -12,9 +12,10 @@ class SKUListView(ListAPIView):
     """
 
     serializer_class = serializers.SKUSerializer
-    filter_backends = (OrderingFilter)
+    filter_backends = (OrderingFilter,)
     ordering_fields = ('create_time,price,sales')
 
     def get_queryset(self):
         category_id = self.kwargs['category_id']
         return SKU.objects.filter(category_id=category_id,is_launched=True)
+
