@@ -181,7 +181,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
