@@ -40,7 +40,6 @@ class CartView(APIView):
             #验证失败,用户未登录
             user = None
 
-
         if user is not None and user.is_authenticated:
             #用户已登陆，在redis中保存
             redis_conn = get_redis_connection('cart')
