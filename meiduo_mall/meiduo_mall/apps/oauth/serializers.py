@@ -1,5 +1,6 @@
 from django_redis import get_redis_connection
 from rest_framework import serializers
+from rest_framework_jwt.settings import api_settings
 
 from oauth.models import OAuthQQUser
 from oauth.utils import OAuthQQ
@@ -15,6 +16,8 @@ class OAuthQQUserSerializer(serializers.Serializer):
     password = serializers.CharField(label='密码',max_length=20,min_length=8)
     sms_code = serializers.CharField(label='短信验证码')
 
+
+
     def validate(self, data):
          # 检验access_token
          access_token = data['access_token']
@@ -25,7 +28,6 @@ class OAuthQQUserSerializer(serializers.Serializer):
          data['openid'] = openid
 
          # 检验短信验证码
-
          mobile = data['mobile']
          sms_code = data['sms_code']
          redis_conn = get_redis_connection('verify_codes')
@@ -58,4 +60,16 @@ class OAuthQQUserSerializer(serializers.Serializer):
             openid = validated_data['openid'],
             user = user
         )
+        # 生成以登陆的token
+        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+
+        payload = jwt_payload_handler(user)
+        token = jwt_encode_handler(payload)
+
+        user.token = token
+
+        #向视图对象中补充对象属性，以便在视图中使用user
+        self.context['view'].user = user
+
         return user
