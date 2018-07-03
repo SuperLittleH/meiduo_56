@@ -219,3 +219,59 @@ class CartView(APIView):
                     # 设置cookie和有效期
                     response.set_cookie('cart', cookie_cort, max_age=constants.CART_COOKIE_EXPIRES)
             return response
+
+
+class CartSelectAllView(APIView):
+    """
+    购物车全选
+    """
+
+    def perform_authentication(self, request):
+        """
+        重写父类的用户验证方法，不进入视图前就检查JWT
+        :param request:
+        :return:
+        """
+        pass
+
+    def put(self, request):
+        serializer = serializers.CartSelectAllSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        selected = serializer.validated_data['selected']
+
+        try:
+            user = request.user
+        except Exception:
+            # 验证失败，用户未登录
+            user = None
+
+        if user is not None and user.is_authenticated:
+            # 用户已登陆，在redis中保存
+            redis_conn = get_redis_connection('cart')
+            cart = redis_conn.hgetall('cart_%s' % user.id)
+            sku_id_list = cart.keys()
+
+            if selected:
+                # 全选
+                redis_conn.sadd('cart_selected_%s' % user.id, *sku_id_list)
+            else:
+                # 取消全选
+                redis_conn.srem('cart_selected_%s' % user.id, *sku_id_list)
+            return Response({'message': 'OK'})
+
+        else:
+            # 用户未登录
+            cart = request.COOKIES.get('cart')
+
+            response = Response({'message': 'OK'})
+
+            if cart is not None:
+                cart = pickle.loads(base64.b64decode(cart.encode()))
+                for sku_id in cart:
+                    cart[sku_id]['selected'] = selected
+                cookie_cart = base64.b64encode(pickle.dumps(cart)).decode()
+                # 设置购物车的cookie
+                # 需要设置有效期
+                response.set_cookie('cart', cookie_cart, max_age=constants.CART_COOKIE_EXPIRES)
+
+            return response
