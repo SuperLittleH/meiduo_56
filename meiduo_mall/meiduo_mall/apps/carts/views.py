@@ -179,3 +179,43 @@ class CartView(APIView):
             # 设置购物车的cookie和时间
             response.set_cookie('cart', cart_cookie, max_age=constants.CART_COOKIE_EXPIRES)
             return response
+
+
+    def delete(self,request):
+        """
+        删除购物车数据
+        :param request:
+        :return:
+        """
+        serializer = serializers.CartDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        sku_id = serializer.validated_data['sku_id']
+
+        # 获取user
+        try:
+            user = request.user
+        except Exception:
+            user = None
+
+        if user is not None and user.is_authenticated:
+            # 用户已登陆在redis保存
+            redis_conn = get_redis_connection('cart')
+            pl = redis_conn.pipeline()
+            pl.hdel('cart_%s' % user.id, sku_id)
+            pl.srem('cart_selected_%s' % user.id, sku_id)
+            pl.execute()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        else:
+            #用户未登录保存于cookie中
+            #获取cookie
+            response = Response(status=status.HTTP_204_NO_CONTENT)
+            cart = request.COOKIES.get('cart')
+            if cart is not None:
+                cart = pickle.loads(base64.b64decode(cart.encode()))
+                if sku_id in cart:
+                    del cart[sku_id]
+                    cookie_cort = base64.b64encode(pickle.dumps(cart)).decode()
+                    # 设置cookie和有效期
+                    response.set_cookie('cart', cookie_cort, max_age=constants.CART_COOKIE_EXPIRES)
+            return response
