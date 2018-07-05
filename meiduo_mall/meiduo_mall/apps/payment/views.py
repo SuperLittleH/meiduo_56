@@ -73,12 +73,12 @@ class PaymentStatusView(APIView):
             #订单编号
             order_id = data.get('out_trade_no')
             #支付宝支付流水号
-            trade_id = data.get('taade_no')
+            trade_id = data.get('trade_no')
             Payment.objects.create(
                 order_id=order_id,
                 trade_id=trade_id
             )
-            OrderInfo.objects.filter(order_id=order_id,status=OrderInfo.ORDER_STATUS_ENUM['UNPAID'].update(status=OrderInfo.ORDER_STATUS_ENUM['UNCOMMENT']))
+            OrderInfo.objects.filter(order_id=order_id,status=OrderInfo.ORDER_STATUS_ENUM['UNPAID']).update(status=OrderInfo.ORDER_STATUS_ENUM['UNCOMMENT'])
             return Response({'trade_id':trade_id})
         else:
             return Response({'message':'非法请求'},status=status.HTTP_403_FORBIDDEN)
