@@ -344,7 +344,7 @@ ALIPAY_URL = "https://openapi.alipaydev.com/gateway.do"
 ALIPAY_DEBUG = True
 
 
-#配置读写分离
+# 配置读写分离
 DATABASE_ROUTERS = ['meiduo_mall.utils.db_router.MasterSlaveDBRouter']
 
 # 收集静态资源
